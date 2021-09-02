@@ -6,7 +6,7 @@ A shooting game to learn python
 a spaceship that can move and shoot 
 
 ## Version 2
-extraterrestrial monsters that u can shoot
+extraterrestrial monsters that u can shoot  
 if they touch you you die
 
 ## Version 3 

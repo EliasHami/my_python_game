@@ -3,6 +3,7 @@ this is the main entry of the game
 """
 import pygame 
 import time
+import threading
 
 def main():
     """main function
@@ -10,18 +11,31 @@ def main():
 
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
+    BLACK = (0, 0, 0)
     pygame.init()
     # screen
     screen = pygame.display.set_mode((240,180))
     screen.fill(WHITE)
-    # spaceship rectangle
-    spaceship =  pygame.Rect(100,100,10,10)
-    pygame.draw.rect(screen, RED, spaceship)
+    # spaceship
+    spaceship = { 
+        "rect" : pygame.Rect(100,100,10,10),
+        "color" : RED,
+        "is_displayed" : True
+    }
     # missile rectangle
-    missile =  pygame.Rect(50,50,5,5)
+    missile =  { 
+        "rect" : pygame.Rect(50,50,5,5),
+        "color" : RED,
+        "is_displayed" : False
+    }
     
-    pygame.display.flip()
-
+    # extraterrestrial monsters
+    et_monster = { 
+        "rect" : pygame.Rect(5, 100, 10, 10),
+        "color" : BLACK,
+        "is_displayed" : False
+    }
+    
     # map arrow keys to motion vector
     arrow_dir = {
         pygame.K_LEFT : (-5,0),
@@ -33,6 +47,15 @@ def main():
     # missile motion vector
     missile_vector = (-5, 0)
 
+    def redraw():
+        """redraw objects
+        """
+        screen.fill(WHITE)
+        for object in [spaceship, et_monster, missile]:
+            if object["is_displayed"]: 
+                pygame.draw.rect(screen, object["color"], object["rect"])
+        pygame.display.flip()
+    
     def move_space_ship(key_pressed):
         """move the space ship
 
@@ -41,10 +64,8 @@ def main():
         """
         if key_pressed in arrow_dir:
             v = arrow_dir[key_pressed]
-            spaceship.move_ip(v)
-            screen.fill(WHITE)
-            pygame.draw.rect(screen, RED, spaceship)
-            pygame.display.flip()
+            spaceship["rect"].move_ip(v)
+            redraw()
         
     def shoot(key_pressed):
         """shoot a missile 
@@ -53,24 +74,32 @@ def main():
             key_pressed (integer): arrow key pressed
         """
         if key_pressed == pygame.K_SPACE:
-            screen.fill(WHITE)
-            pygame.draw.rect(screen, RED, spaceship)
-            missile.update(spaceship.left -5, spaceship.top+2, 5, 5)
-            pygame.draw.rect(screen, RED, missile)
-            pygame.display.flip()
-            while missile.x > 0:
-                screen.fill(WHITE)
-                pygame.draw.rect(screen, RED, spaceship)
-                missile.move_ip(missile_vector)
-                pygame.draw.rect(screen, RED, missile)
-                pygame.display.flip()
-                time.sleep(0.1)
-        screen.fill(WHITE)
-        pygame.draw.rect(screen, RED, spaceship)   
-        pygame.display.flip() 
+            missile["rect"].update(spaceship["rect"].left -5, spaceship["rect"].top+2, 5, 5)
+            missile["is_displayed"] = True
+            redraw()
+            while missile["rect"].x > 0:
+                # TODO collision between missile and et_monster
+                missile["rect"].move_ip(missile_vector) 
+                redraw()
+                time.sleep(0.01)
+            missile["is_displayed"] = False
+            redraw()
 
     running = True
 
+    def pop_monsters():
+        """pop monsters at random time
+        """
+        while running:
+            et_monster["is_displayed"] = True
+            redraw()
+            time.sleep(5)
+
+    t1 = threading.Thread(target=pop_monsters)
+    t1.daemon = True
+    t1.start()
+    
+    redraw()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -78,6 +107,8 @@ def main():
             if event.type == pygame.KEYDOWN:
                 move_space_ship(event.key)
                 shoot(event.key)
-        
+        # pop_monsters()
+    t1.join()
+
 if __name__ == "__main__":
     main()
