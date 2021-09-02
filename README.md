@@ -1,15 +1,13 @@
 # my_python_game
-A mmorpg like game to learn python 
+A shooting game to learn python 
 
 # specs
 ## Version 1
-A world to navigate in with trees and houses  
-A character that can be moved in using arrows
+a spaceship that can move and shoot 
 
 ## Version 2
-monsters  
-attack monstres and they can attack us    
+extraterrestrial monsters that u can shoot
+if they touch you you die
 
 ## Version 3 
-pnj  
-exchange system 
+health point system
