@@ -4,6 +4,8 @@ this is the main entry of the game
 import pygame 
 import time
 import threading
+from math import isclose
+from random import randrange
 
 def main():
     """main function
@@ -78,22 +80,25 @@ def main():
             missile["is_displayed"] = True
             redraw()
             while missile["rect"].x > 0:
-                # TODO collision between missile and et_monster
                 missile["rect"].move_ip(missile_vector) 
                 redraw()
                 time.sleep(0.01)
+                if isclose(missile["rect"].x, et_monster["rect"].x, abs_tol=5) and isclose(missile["rect"].y, et_monster["rect"].y, abs_tol=5):
+                    et_monster["is_displayed"] = False
             missile["is_displayed"] = False
             redraw()
 
     running = True
 
     def pop_monsters():
-        """pop monsters at random time
+        """pop monsters at random place
         """
         while running:
-            et_monster["is_displayed"] = True
-            redraw()
-            time.sleep(5)
+            if not(et_monster["is_displayed"]):
+                et_monster["rect"].update(5, randrange(0, 180, 5), 10, 10)
+                et_monster["is_displayed"] = True
+                redraw()
+            time.sleep(1)
 
     t1 = threading.Thread(target=pop_monsters)
     t1.daemon = True
