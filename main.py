@@ -14,26 +14,30 @@ def main():
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
     BLACK = (0, 0, 0)
+    screen_dimensions = (240,180)
     pygame.init()
     # screen
-    screen = pygame.display.set_mode((240,180))
+    screen = pygame.display.set_mode(screen_dimensions)
     screen.fill(WHITE)
     # spaceship
+    spaceship_dimensions = (10,10)
     spaceship = { 
-        "rect" : pygame.Rect(100,100,10,10),
+        "rect" : pygame.Rect((100,100),spaceship_dimensions),
         "color" : RED,
         "is_displayed" : True
     }
     # missile rectangle
+    missile_dimensions = (5,5)
     missile =  { 
-        "rect" : pygame.Rect(50,50,5,5),
+        "rect" : pygame.Rect((50,50),missile_dimensions),
         "color" : RED,
         "is_displayed" : False
     }
     
     # extraterrestrial monsters
+    et_monster_dimensions = (10,10)
     et_monster = { 
-        "rect" : pygame.Rect(5, 100, 10, 10),
+        "rect" : pygame.Rect((5, 100), et_monster_dimensions),
         "color" : BLACK,
         "is_displayed" : False
     }
@@ -76,7 +80,8 @@ def main():
             key_pressed (integer): arrow key pressed
         """
         if key_pressed == pygame.K_SPACE:
-            missile["rect"].update(spaceship["rect"].left -5, spaceship["rect"].top+2, 5, 5)
+            missile_initial_position = (spaceship["rect"].left -5, spaceship["rect"].top+2)
+            missile["rect"].update(missile_initial_position, missile_dimensions)
             missile["is_displayed"] = True
             redraw()
             while missile["rect"].x > 0:
@@ -95,7 +100,8 @@ def main():
         """
         while running:
             if not(et_monster["is_displayed"]):
-                et_monster["rect"].update(5, randrange(0, 180, 5), 10, 10)
+                et_monster_pop_position = (5, randrange(0, screen_dimensions[1], 5))
+                et_monster["rect"].update(et_monster_pop_position, et_monster_dimensions)
                 et_monster["is_displayed"] = True
                 redraw()
             time.sleep(1)
