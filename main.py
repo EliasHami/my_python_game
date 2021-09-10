@@ -118,7 +118,6 @@ def main():
             if event.type == pygame.KEYDOWN:
                 move_space_ship(event.key)
                 shoot(event.key)
-        # pop_monsters()
     t1.join()
 
 if __name__ == "__main__":
